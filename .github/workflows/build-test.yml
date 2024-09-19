@@ -1,0 +1,29 @@
+name: build-check
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ] # PRのOpen,Reopen,更新時に実行
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }} #PRのベースブランチの最新の状態を取得
+      - name: Setup JDK #jdkのセットアップ
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 17
+          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Build With Gradle # ReleaseビルドとDebugビルドをcheck
+        run: |
+          ./gradlew assembleDebug
+          ./gradlew assembleRelease 
