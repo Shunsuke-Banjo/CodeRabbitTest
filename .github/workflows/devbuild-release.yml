@@ -41,10 +41,11 @@ jobs:
         id: apk-path
         run: |
           path=$(find **/build/outputs/apk -name '*.apk' -type f | head -1)
-          echo "::set-output name=path::$path"
+          echo "path=$path" >> $GITHUB_ENV
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: apk
           path: ${{ steps.apk-path.outputs.path }}
+          retention-days: 3
