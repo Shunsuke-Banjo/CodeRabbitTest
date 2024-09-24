@@ -1,0 +1,50 @@
+name: dev-build-output
+
+#手動で実行
+on:
+  workflow_dispatch:
+    inputs:
+      # ビルドバリアントを選択
+      variant:
+        description: 'Build variant'
+        required: true
+        #ビルドするブランチ名を選択
+      ref:
+        description: 'branch name|tag name|commit SHA'
+        required: true
+        default: master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }} #入力したブランチを取得
+      #jdkのセットアップ
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      # Gradleの実行権限を付与
+      - name: Make gradlew executable　
+        run: chmod +x ./gradlew
+      #入力したbuild variantでビルド
+      - name: Build With Gradle
+        run: |
+          ./gradlew assemble${{ github.event.inputs.variant }}
+      - name: Get apk path
+        id: apk-path
+        run: |
+          path=$(find **/build/outputs/apk -name '*.apk' -type f | head -1)
+          echo "::set-output name=path::$path"
+      # debugビルドの場合はapkをアップロード
+      - name: Upload apk file
+        uses: actions/upload-artifact@v2
+        with:
+          name: apk
+          path: ${{ steps.apk-path.outputs.path }}
