@@ -44,7 +44,7 @@ jobs:
           echo "::set-output name=path::$path"
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: apk
           path: ${{ steps.apk-path.outputs.path }}
