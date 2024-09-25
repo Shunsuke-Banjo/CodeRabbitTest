@@ -36,7 +36,7 @@ jobs:
       #入力したbuild variantでビルド
       - name: Build With Gradle
         run: |
-          ./gradlew assemble${{ github.event.inputs.variant }}
+          ./gradlew bundle${{ github.event.inputs.variant }}
       - name: Get apk path
         id: apk-path
         run: |
@@ -48,4 +48,4 @@ jobs:
         with:
           name: apk
           path: ${{ env.path }}
-          retention-days: 3
+          retention-days: 1 # 1日後に削除(ストレージ圧迫対策）
