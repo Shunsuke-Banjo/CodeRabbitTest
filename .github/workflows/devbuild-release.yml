@@ -40,12 +40,12 @@ jobs:
       - name: Get apk path
         id: apk-path
         run: |
-          path=$(find **/app -name '*.aab' -type f | head -1)
+          path=$(find **/build/outputs/bundle -name '*.aab' -type f | head -1)
           echo "path=$path" >> $GITHUB_ENV
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
         uses: actions/upload-artifact@v4
         with:
-          name: apk
+          name: outputs
           path: ${{ env.path }}
           retention-days: 1 # 1日後に削除(ストレージ圧迫対策）
