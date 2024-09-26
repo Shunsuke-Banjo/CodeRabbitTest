@@ -1,0 +1,58 @@
+name: build-release
+
+#手動で実行
+on:
+  workflow_dispatch:
+    inputs:
+      # ビルドバリアントを選択
+      variant:
+        description: 'Build variant'
+        required: true
+        #ビルドするブランチ名を選択
+      ref:
+        description: 'branch name|tag name|commit SHA'
+        required: true
+        default: master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }} #入力したブランチを取得
+      #jdkのセットアップ
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      # Gradleの実行権限を付与
+      - name: Make gradlew executable　
+        run: chmod +x ./gradlew
+      #入力したbuild variantで署名付きビルド
+      - name: Build With Gradle
+        run: |
+          if [[ -n '${{ secrets.RELEASE_KEYSTORE_BASE64}}' ]]; then
+            echo '${{ secrets.KEYSTORE_BASE64 }}' | base64 -d > release.keystore
+            export KEYSTORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}'
+            export KEY_ALIAS='${{ secrets.KEY_ALIAS }}'
+            export KEY_PASSWORD='${{ secrets.KEY_PASSWORD }}'
+          fi
+          ./gradlew bundle${{ github.event.inputs.variant }}
+      # aabファイルのパスを取得
+      - name: Get apk path
+        id: apk-path
+        run: |
+          path=$(find **/build/outputs/bundle -name '*.aab' -type f | head -1)
+          echo "path=$path" >> $GITHUB_ENV
+      # debugビルドの場合はapkをアップロード
+      - name: Upload apk file
+        uses: actions/upload-artifact@v4
+        with:
+          name: outputs
+          path: ${{ env.path }}
+          retention-days: 1 # 1日後に削除(ストレージ圧迫対策）
