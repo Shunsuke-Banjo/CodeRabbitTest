@@ -37,17 +37,17 @@ jobs:
       - name: Build With Gradle
         run: |
           if [[ -n '${{ secrets.RELEASE_KEYSTORE_BASE64}}' ]]; then
-            echo '${{ secrets.KEYSTORE_BASE64 }}' | base64 -d > release.keystore
+            echo '${{ secrets.KEYSTORE_BASE64 }}' | base64 -decode > ~/signingConfigs/release.keystore
             export KEYSTORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}'
             export KEY_ALIAS='${{ secrets.KEY_ALIAS }}'
             export KEY_PASSWORD='${{ secrets.KEY_PASSWORD }}'
           fi
-          ./gradlew bundle${{ github.event.inputs.variant }}
+          ./gradlew assemble${{ github.event.inputs.variant }}
       # aabファイルのパスを取得
       - name: Get apk path
         id: apk-path
         run: |
-          path=$(find **/build/outputs/bundle -name '*.aab' -type f | head -1)
+          path=$(find **/build/outputs/apk -name '*.aab' -type f | head -1)
           echo "path=$path" >> $GITHUB_ENV
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
