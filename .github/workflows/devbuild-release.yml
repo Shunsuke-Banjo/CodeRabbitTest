@@ -36,7 +36,7 @@ jobs:
       #入力したbuild variantでビルド
       - name: Build With Gradle
         run: |
-          ./gradlew bundle${{ github.event.inputs.variant }}
+          ./gradlew assemble${{ github.event.inputs.variant }}
       - name: Get apk path
         id: apk-path
         run: |
