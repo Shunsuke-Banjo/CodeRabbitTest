@@ -25,6 +25,6 @@ jobs:
         # Gradleの実行権限を付与
       - name: Make gradlew executable　
         run: chmod +x ./gradlew
-      - name: Build With Gradle # ReleaseビルドとDebugビルドをcheck
+      - name: Build With Gradle # 全てのビルドバリアントをチェック
         run: |
           ./gradlew assemble
