@@ -14,8 +14,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }} #PRのベースブランチの最新の状態を取得
-      - name: Setup JDK #jdkのセットアップ
+          ref: ${{ github.event.pull_request.head.sha }} # PRのヘッドブランチの最新の状態を取得
+          submodules: true
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN_FOR_BUILD_CHECK }}
+        # jdkのセットアップ
+      - name: Setup JDK
         uses: actions/setup-java@v3
         with:
           distribution: adopt
@@ -25,6 +28,11 @@ jobs:
         # Gradleの実行権限を付与
       - name: Make gradlew executable　
         run: chmod +x ./gradlew
-      - name: Build With Gradle # 全てのビルドバリアントをチェック
+        # 全てのビルドバリアントをチェック
+      - name: Build With Gradle
+        env:
+          USERNAME: ${{ secrets.BUILD_GITHUB_USERNAME }}
+          TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN_FOR_BUILD_CHECK }}
         run: |
-          ./gradlew assemble
+          ./gradlew assembleDevelopDebug assembleProductRelease
+        timeout-minutes: 30

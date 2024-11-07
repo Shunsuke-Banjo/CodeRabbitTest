@@ -1,6 +1,21 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+}
+
+
+val secrets = readProperties(file("release.jks"))
+fun readProperties(propertiesFile: File) = Properties().apply {
+    try {
+        propertiesFile.inputStream().use { fis ->
+            load(fis)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 android {
@@ -19,7 +34,14 @@ android {
             useSupportLibrary = true
         }
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file(secrets["storeFile"])
+            storePassword = secrets["storePassword"]
+            keyAlias = secrets["alias"]
+            keyPassword = secrets["keyPassword"]
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false

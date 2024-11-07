@@ -8,7 +8,7 @@ on:
       variant:
         description: 'Build variant'
         required: true
-        #ビルドするブランチ名を選択
+      #ビルドするブランチ名を選択
       ref:
         description: 'branch name|tag name|commit SHA'
         required: true
@@ -22,6 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.ref }} #入力したブランチを取得
+          submodules: true
       #jdkのセットアップ
       - name: Setup JDK
         uses: actions/setup-java@v3
