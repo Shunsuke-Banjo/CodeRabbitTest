@@ -36,7 +36,7 @@ jobs:
         run: chmod +x ./gradlew
         # keystoreのデコード
       - name: Decode Keystore
-        run: echo '${{ secrets.RELEASE_KEYSTORE_BASE64 }}' | base64 -d> ./release.jks
+        run: echo '${{ secrets.RELEASE_KEYSTORE_BASE64 }}' | base64 -d> release.jks
       #入力したbuild variantで署名付きビルド
       - name: Build With Gradle
         env:
