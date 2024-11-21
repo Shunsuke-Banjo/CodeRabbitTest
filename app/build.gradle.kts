@@ -1,21 +1,6 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-}
-
-
-val secrets = readProperties(file("release.jks"))
-fun readProperties(propertiesFile: File) = Properties().apply {
-    try {
-        propertiesFile.inputStream().use { fis ->
-            load(fis)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
 }
 
 android {
@@ -36,15 +21,16 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile = file(secrets["storeFile"])
-            storePassword = secrets["storePassword"]
-            keyAlias = secrets["alias"]
-            keyPassword = secrets["keyPassword"]
+            storeFile = file("../release.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "KrWacwZ4qRcR"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "rabbitRelease"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "KrWacwZ4qRcR"
         }
     }
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
