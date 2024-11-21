@@ -9,10 +9,10 @@ on:
         description: 'Build variant'
         required: true
         #ビルドするブランチ名を選択
-      ref:
-        description: 'branch name|tag name|commit SHA'
-        required: true
-        default: master
+#      ref:
+#        description: 'branch name|tag name|commit SHA'
+#        required: true
+#        default: master
 
 jobs:
   build:
