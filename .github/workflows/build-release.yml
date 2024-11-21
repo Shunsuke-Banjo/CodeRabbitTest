@@ -42,7 +42,7 @@ jobs:
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
           ./gradlew bundle${{ github.event.inputs.variant }}
       # aabファイルのパスを取得
