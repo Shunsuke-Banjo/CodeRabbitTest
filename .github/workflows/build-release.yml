@@ -4,15 +4,14 @@ name: build-release
 on:
   workflow_dispatch:
     inputs:
-      # ビルドバリアントを選択
+      # ビルド環境を選択
       variant:
-        description: 'Build variant'
+        description: 'Choose build variant'
         required: true
-        #ビルドするブランチ名を選択
-#      ref:
-#        description: 'branch name|tag name|commit SHA'
-#        required: true
-#        default: master
+        default: release
+        options:
+          - develop
+          - release
 
 jobs:
   build:
@@ -21,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }} #入力したブランチを取得
+          ref: ${{ github.ref }} #選択したブランチ
       #jdkのセットアップ
       - name: Setup JDK
         uses: actions/setup-java@v3
@@ -34,17 +33,23 @@ jobs:
       # Gradleの実行権限を付与
       - name: Make gradlew executable　
         run: chmod +x ./gradlew
-        # keystoreのデコード
+      # keystoreのデコード
       - name: Decode Keystore
+        if: ${{ github.event.inputs.variant == 'release' }}
         run: echo '${{ secrets.RELEASE_KEYSTORE_BASE64 }}' | base64 -d> release.jks
-      #入力したbuild variantで署名付きビルド
+      # releaseビルド
       - name: Build With Gradle
+        if: ${{ github.event.inputs.variant == 'release' }}
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
-          ./gradlew assemble${{ github.event.inputs.variant }}
+          ./gradlew assembleRelease
+      # developビルド
+      - name: Build With Gradle (Develop)
+        if: ${{ github.event.inputs.variant == 'develop' }}
+        run: ./gradlew assembleDebug
       # aabファイルのパスを取得
       - name: Get apk path
         id: apk-path
