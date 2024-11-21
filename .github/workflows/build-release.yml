@@ -28,6 +28,7 @@ jobs:
         with:
           distribution: adopt
           java-version: 17
+          cache: gradle
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       # Gradleの実行権限を付与
@@ -42,12 +43,12 @@ jobs:
             export KEY_ALIAS='${{ secrets.KEY_ALIAS }}'
             export KEY_PASSWORD='${{ secrets.KEY_PASSWORD }}'
           fi
-          ./gradlew assemble${{ github.event.inputs.variant }}
+          ./gradlew bundle${{ github.event.inputs.variant }}
       # aabファイルのパスを取得
       - name: Get apk path
         id: apk-path
         run: |
-          path=$(find **/build/outputs/apk -name '*.apk' -type f | head -1)
+          path=$(find **/build/outputs/ -name '*.aab' -type f | head -1)
           echo "path=$path" >> $GITHUB_ENV
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
