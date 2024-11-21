@@ -44,12 +44,12 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
-          ./gradlew bundle${{ github.event.inputs.variant }}
+          ./gradlew assemble${{ github.event.inputs.variant }}
       # aabファイルのパスを取得
       - name: Get apk path
         id: apk-path
         run: |
-          path=$(find **/build/outputs/ -name '*.aab' -type f | head -1)
+          path=$(find **/build/outputs/ -name '*.apk' -type f | head -1)
           echo "path=$path" >> $GITHUB_ENV
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
