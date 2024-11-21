@@ -8,6 +8,7 @@ on:
       variant:
         description: 'Choose build variant'
         required: true
+        type: choice
         default: release
         options:
           - develop
