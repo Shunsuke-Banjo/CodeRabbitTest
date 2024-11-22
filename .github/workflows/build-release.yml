@@ -95,6 +95,8 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v2.0.0
         with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel-id: ${{ secrets.SLACK_CHANNEL }}
           payload: |
             {
@@ -122,5 +124,4 @@ jobs:
                     }
                 ]
             }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        
