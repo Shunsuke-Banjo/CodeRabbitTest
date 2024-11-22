@@ -13,6 +13,15 @@ on:
         options:
           - develop
           - release
+      # ビルド環境を選択
+      extension:
+        description: 'Choose extension'
+        required: true
+        type: choice
+        default: aab
+        options:
+          - aab
+          - apk
 
 jobs:
   build:
@@ -46,16 +55,29 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
-          ./gradlew bundlerelease
+          if [ ${{github.event.inputs.extension}} == 'aab' ]; then
+            ./gradlew bundleRelease
+          else
+            ./gradlew assembleRelease
+          fi
       # developビルド
       - name: Build With Gradle (Develop)
         if: ${{ github.event.inputs.variant == 'develop' }}
-        run: ./gradlew bundledebug
-      # aabファイルのパスを取得
+        run: |
+          if [ ${{github.event.inputs.extension}} == 'aab' ]; then
+            ./gradlew bundledevelop
+          else
+            ./gradlew assembledevelop
+          fi
+    # aabファイルのパスを取得
       - name: Get apk path
         id: apk-path
         run: |
-          path=$(find **/build/outputs/ -name '*.aab' -type f | head -1)
+          if [ ${{github.event.inputs.extension}} == 'aab' ]; then
+            path=$(find **/build/outputs/ -name '*.aab' -type f | head -1)
+          else
+            path=$(find **/build/outputs/ -name '*.apk' -type f | head -1)
+          fi
           echo "path=$path" >> $GITHUB_ENV
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
