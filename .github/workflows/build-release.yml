@@ -92,25 +92,13 @@ jobs:
         run: echo "artifact_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }}" >> $GITHUB_ENV
       # Slack通知
       - name: Send Slack Notification
-        id: slack
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: slackapi/slack-github-action@v1.16.0
+        uses: slackapi/slack-github-action@v2.0.0
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            {
-              "text": "ビルド結果: ${{ job.status }}\n\n",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":github: ビルド結果: ${{ job.status }}\n\n"
-                  }
-                },
-              ]
-            }
+            channel : ${{ secrets.SLACK_CHANNEL }}
+            text: "result : ${{ job.status }}"
 #            attachments:
 #                - "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
 #                  "fields": [
