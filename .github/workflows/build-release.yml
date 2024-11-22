@@ -46,11 +46,11 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
-          ./gradlew assembleRelease
+          ./gradlew bundlerelease
       # developビルド
       - name: Build With Gradle (Develop)
         if: ${{ github.event.inputs.variant == 'develop' }}
-        run: ./gradlew assembleDebug
+        run: ./gradlew bundledebug
       # aabファイルのパスを取得
       - name: Get apk path
         id: apk-path
