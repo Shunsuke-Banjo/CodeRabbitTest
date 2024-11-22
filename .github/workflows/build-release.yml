@@ -89,7 +89,7 @@ jobs:
           retention-days: 1 # 1日後に削除(ストレージ圧迫対策）
       # アーティファクトのリンクを生成
       - name: Generate artifact link
-        run: echo "artifact_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts${{ steps.artifact-upload-step.outputs.artifact-id }}" >> $GITHUB_ENV
+        run: echo "artifact_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }}" >> $GITHUB_ENV
       # Slack通知
       - name: Send Slack Notification
         id: slack
@@ -97,31 +97,29 @@ jobs:
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channel-id: ${{ secrets.SLACK_CHANNEL }}
           payload: |
-            {
-              "text": ":github: ビルド結果: ${{ job.status }}\n\n",
-              "attachments": [
-                    {
-                    "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
-                    "fields": [
-                        {
-                        "title": "ビルド環境",
-                        "value": "${{ github.event.inputs.variant }}",
-                        "short": true
-                        },
-                        {
-                        "title": "ビルド結果",
-                        "value": "${{ job.status }}",
-                        "short": true
-                        },
-                        {
-                        "title": "アップロードURL",
-                        "value": "${{ env.artifact_url }}",
-                        "short": true
-                        }
-                    ]
-                    }
-                ]
-            }
+            channel: ${{ secrets.SLACK_CHANNEL }}
+            "text": ":github: ビルド結果: ${{ job.status }}\n\n",
+            "attachments": [
+                  {
+                  "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
+                  "fields": [
+                      {
+                      "title": "ビルド環境",
+                      "value": "${{ github.event.inputs.variant }}",
+                      "short": true
+                      },
+                      {
+                      "title": "ビルド結果",
+                      "value": "${{ job.status }}",
+                      "short": true
+                      },
+                      {
+                      "title": "アップロードURL",
+                      "value": "${{ env.artifact_url }}",
+                      "short": true
+                      }
+                  ]
+                  }
+              ]
         
