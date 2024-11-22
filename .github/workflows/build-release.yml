@@ -99,8 +99,8 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL }}
-            "text": ":github: ビルド結果: ${{ job.status }}\n\n",
-            "attachments": [
+            text: ":github: ビルド結果: ${{ job.status }}\n\n",
+            attachments: [
                   {
                   "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
                   "fields": [
