@@ -69,7 +69,7 @@ jobs:
           else
             ./gradlew assembleDebug
           fi
-    # aabファイルのパスを取得
+      # aabファイルのパスを取得
       - name: Get apk path
         id: apk-path
         run: |
@@ -81,20 +81,46 @@ jobs:
           echo "path=$path" >> $GITHUB_ENV
       # debugビルドの場合はapkをアップロード
       - name: Upload apk file
+        id: artifact-upload-step
         uses: actions/upload-artifact@v4
         with:
           name: outputs
           path: ${{ env.path }}
           retention-days: 1 # 1日後に削除(ストレージ圧迫対策）
-#      - name:Send Slack Notification
-#        id: slack
-#        user
-#        uses: rtCamp/action-slack-notify@v2
-#        env:
-#          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-#          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-#          SLACK_USERNAME: ${{ secrets.SLACK_USERNAME }}
-#          SLACK_ICON: ${{ secrets.SLACK_ICON }}
-#          SLACK_MESSAGE: "Build Success"
-#          SLACK_COLOR: good
-#          SLACK_TITLE
+      # アーティファクトのリンクを生成
+      - name: Generate artifact link
+        run: echo "artifact_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts${{ steps.artifact-upload-step.outputs.artifact-id }}" >> $GITHUB_ENV
+      # Slack通知
+      - name: Send Slack Notification
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL }}
+          payload: |
+            {
+              "text": ":github: ビルド結果: ${{ job.status }}\n\n",
+              "attachments": [
+                    {
+                    "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
+                    "fields": [
+                        {
+                        "title": "ビルド環境",
+                        "value": "${{ github.event.inputs.variant }}",
+                        "short": true
+                        },
+                        {
+                        "title": "ビルド結果",
+                        "value": "${{ job.status }}",
+                        "short": true
+                        },
+                        {
+                        "title": "アップロードURL",
+                        "value": "${{ env.artifact_url }}",
+                        "short": true
+                        }
+                    ]
+                    }
+                ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
