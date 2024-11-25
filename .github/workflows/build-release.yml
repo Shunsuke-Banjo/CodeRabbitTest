@@ -100,14 +100,14 @@ jobs:
             channel : ${{ secrets.SLACK_CHANNEL }}
             text: "ビルド結果 : ${{ job.status }}"
             attachments:
-                - color: "${{ job.status == 'success' && 'good' || 'danger' }}",
-                  fields: 
-                    - title: "ビルド環境",
-                      value: "${{ github.event.inputs.variant }}",
-                      short: true
-                    - title: "ビルド結果",
-                      value: "${{ job.status }}",
-                      short: true
-                    - title: "アップロードURL",
-                      value: "${{ env.artifact_url }}",
-                      short: true
+              - color: "${{ job.status == 'success' && 'good' || 'danger' }}",
+                fields: 
+                  - title: "ビルド環境",
+                    value: "${{ github.event.inputs.variant }}",
+                    short: true
+#                    - title: "ビルド結果",
+#                      value: "${{ job.status }}",
+#                      short: true
+#                    - title: "アップロードURL",
+#                      value: "${{ env.artifact_url }}",
+#                      short: true
