@@ -117,7 +117,7 @@ jobs:
                       "short": true
                     },
                     {
-                      "title": "アップロードURL",
+                      "title": "${{ job.status == 'success' && 'アップロードURL' || '' }}",
                       "value": "${{ env.artifact_url }}",
                     }
                   ]
