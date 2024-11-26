@@ -1,4 +1,4 @@
-name: output-build
+name: output-firebase-build
 
 #手動で実行
 on:
@@ -80,17 +80,15 @@ jobs:
             path=$(find **/build/outputs/ -name '*.apk' -type f | head -1)
           fi
           echo "path=$path" >> $GITHUB_ENV
-      # debugビルドの場合はapkをアップロード
-      - name: Upload apk file
-        id: artifact-upload-step
-        uses: actions/upload-artifact@v4
+      # Firebase App Distributionへのデプロイ
+      - name: Deploy To Firebase App Distribution
+        if: ${{ github.event.inputs.variant == 'develop' }}
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          name: outputs
-          path: ${{ env.path }}
-          retention-days: 1 # 1日後に削除(ストレージ圧迫対策）
-      # アーティファクトのリンクを生成
-      - name: Generate artifact link
-        run: echo "artifact_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }}" >> $GITHUB_ENV
+            appId: ${{ secrets.FIREBASE_DEV_APP_ID }}
+            serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+            groups: developer
+            file: ${{ env.path }}
       # Slack通知
       - name: Send Slack Notification
         if: always() && (failure() || success())
@@ -116,10 +114,6 @@ jobs:
                       "value": "${{ github.event.inputs.variant }}",
                       "short": true
                     },
-                    {
-                      "title": "${{ job.status == 'success' && 'アップロードURL' || '' }}",
-                      "value": "${{ env.artifact_url }}",
-                    }
                   ]
                 }
               ]
