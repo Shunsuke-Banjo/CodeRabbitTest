@@ -92,6 +92,7 @@ jobs:
         run: echo "artifact_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }}" >> $GITHUB_ENV
       # Slack通知
       - name: Send Slack Notification
+        if: always() && (failure() || success())
         uses: slackapi/slack-github-action@v2.0.0
         with:
           method: chat.postMessage
