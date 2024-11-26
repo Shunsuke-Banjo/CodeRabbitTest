@@ -1,4 +1,4 @@
-name: build-release
+name: output-build
 
 #手動で実行
 on:
@@ -99,7 +99,7 @@ jobs:
           payload: |
             {
               "channel" : ${{ secrets.SLACK_CHANNEL }},
-              "text": "apk生成ワークフロー",
+              "text": "output-buildのGithubActionsを実行しました",
               "attachments": [
                 {
                   "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
