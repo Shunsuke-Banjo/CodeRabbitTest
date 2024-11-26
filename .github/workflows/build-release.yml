@@ -99,25 +99,24 @@ jobs:
           payload: |
             {
               "channel" : ${{ secrets.SLACK_CHANNEL }},
-              "text": "ビルド結果 : ${{ job.status }}",
+              "text": "apk生成ワークフロー",
               "attachments": [
                 {
                   "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
                   "fields": [
+                    {
+                      "title": "ビルド結果",
+                      "value": "${{ job.status == 'success' && :white_check_mark: || :x: }}${{ job.status }}",
+                      "short": true
+                    },
                     {
                       "title": "ビルド環境",
                       "value": "${{ github.event.inputs.variant }}",
                       "short": true
                     },
                     {
-                      "title": "ビルド結果",
-                      "value": "${{ job.status }}",
-                      "short": true
-                    },
-                    {
                       "title": "アップロードURL",
                       "value": "${{ env.artifact_url }}",
-                      "short": true
                     }
                   ]
                 }
