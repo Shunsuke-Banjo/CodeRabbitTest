@@ -106,7 +106,7 @@ jobs:
                   "fields": [
                     {
                       "title": "ビルド結果",
-                      "value": "${{ job.status == 'success' && :white_check_mark: || :x: }}${{ job.status }}",
+                      "value": "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}${{ job.status }}",
                       "short": true
                     },
                     {
