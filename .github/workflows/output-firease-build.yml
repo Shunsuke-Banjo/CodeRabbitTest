@@ -99,7 +99,7 @@ jobs:
           payload: |
             {
               "channel" : ${{ secrets.SLACK_CHANNEL }},
-              "text": "GithubActions[output-build]を実行しました。",
+              "text": "GithubActions[output-firebase-build]を実行しました。",
               "attachments": [
                 {
                   "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
