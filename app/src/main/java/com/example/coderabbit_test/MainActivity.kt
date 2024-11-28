@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) { 
-                    Greeting("build-check-3")
+                    Greeting("build-check-4")
                 }
             }
         }
