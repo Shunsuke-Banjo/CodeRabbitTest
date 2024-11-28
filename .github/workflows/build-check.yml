@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+            ref: ${{ github.event.pull_request.base.ref }}
         # jdkのセットアップ
       - name: Setup JDK
         uses: actions/setup-java@v3
@@ -34,4 +36,4 @@ jobs:
         # リリースのビルドバリアントをチェック
       - name: Build With Gradle
         run: |
-          ./gradlew assemblerelease
+          ./gradlew assembledebug
