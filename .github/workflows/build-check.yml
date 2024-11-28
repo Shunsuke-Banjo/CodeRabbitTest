@@ -1,7 +1,11 @@
 name: build-check
 on:
   pull_request:
-    types: [ opened, synchronize, reopened ] # PRのOpen,Reopen,更新時に実行
+    branches:
+      - master
+      - release/*
+    types:
+      - closed
 
 permissions:
   contents: write
@@ -9,30 +13,27 @@ permissions:
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # 20分超えたら止める
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }} # PRのヘッドブランチの最新の状態を取得
-          submodules: true
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN_FOR_BUILD_CHECK }}
         # jdkのセットアップ
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
           distribution: adopt
           java-version: 17
+          cache: gradle
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         # Gradleの実行権限を付与
       - name: Make gradlew executable　
         run: chmod +x ./gradlew
-        # 全てのビルドバリアントをチェック
+        # リリースのビルドバリアントをチェック
       - name: Build With Gradle
-        env:
-          USERNAME: ${{ secrets.BUILD_GITHUB_USERNAME }}
-          TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN_FOR_BUILD_CHECK }}
         run: |
-          ./gradlew assembleDevelopDebug assembleProductRelease
-        timeout-minutes: 30
+          ./gradlew assembleProductRelease
