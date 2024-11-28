@@ -36,4 +36,4 @@ jobs:
         # リリースのビルドバリアントをチェック
       - name: Build With Gradle
         run: |
-          ./gradlew assembleProductRelease
+          ./gradlew assemblerelease
