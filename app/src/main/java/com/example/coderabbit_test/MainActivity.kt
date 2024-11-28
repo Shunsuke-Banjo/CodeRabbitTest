@@ -21,8 +21,8 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("build-check-test")
+                ) { 
+                    Greeting("build-check-4")
                 }
             }
         }
