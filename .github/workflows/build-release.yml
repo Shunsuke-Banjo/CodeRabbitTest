@@ -107,7 +107,7 @@ jobs:
                   "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
                   "fields": [
                     {
-                      "title": "ビルド結果",
+                      "title": "実行結果",
                       "value": "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}${{ job.status }}",
                       "short": true
                     },
